@@ -10,8 +10,14 @@ COLOR_GREEN="\e[1;32m"
 COLOR_RED="\e[00;31m"
 
 NO_CHANGES_STRING="nothing to commit (working directory clean)"
-CHANGES_ICON='\x26\x13' #nice x UTF-8
-NO_CHANGES_ICON='\x27\x13' #checkmark UTF-8
+#CHANGES_ICON='\x26\x13' #nice x UTF-8
+#NO_CHANGES_ICON='\x27\x13' #checkmark UTF-8
+# Use utf-8 code directly
+CHANGES_ICON='\xe2\x98\x93'  #nice x UTF-8
+NO_CHANGES_ICON='\xe2\x9c\x93'  #checkmark UTF-8
+
+CHANGES_ICON_ASCII="x"
+NO_CHANGES_ICON_ASCII="o"
 
 function iconify {
 	# will convert a given string to utf-16be which will display a nice icon for us
@@ -20,12 +26,28 @@ function iconify {
 
 # a nice x icon
 function git_changes_icon {
-	get_icon $CHANGES_ICON $COLOR_RED
+
+	local ICON
+	if [ "UTF-8" = "$(locale charmap)" ]; then	
+		ICON=$CHANGES_ICON
+	else
+		ICON=$CHANGES_ICON_ASCII
+	fi
+
+	get_icon $ICON $COLOR_RED
 }
 
 # a checkbox icon
 function git_no_changes_icon {
-	get_icon $NO_CHANGES_ICON $COLOR_GREEN
+
+	local ICON
+	if [ "UTF-8" = "$(locale charmap)" ]; then	
+		ICON=$NO_CHANGES_ICON
+	else
+		ICON=$NO_CHANGES_ICON_ASCII
+	fi
+
+	get_icon $ICON $COLOR_GREEN
 }
 
 # usage: get_icon $CHANGES_ICON $COLOR_RED
@@ -36,7 +58,9 @@ function get_icon {
 	# note the use of double quoutes around the $CHANGES_ICON variable
 	# | the pipe symbol will send the output of echo -ne '...' to the next parameter 'iconify'
 	# iconify is a function which we created to convert our UTF8 code to nice icons 
-	local MY_ICON=$(echo -ne "$1" | iconify)
+	#local MY_ICON=$(echo -ne "$1" | iconify) 
+	# don't need to iconify because we're using utf-8 code directly
+	local MY_ICON=$(echo -ne "$1")
 	echo -ne "$2$MY_ICON$COLOR_RESET"	
 }
 
