@@ -52,15 +52,30 @@
 
 # return the uparrow character
 __get_uparrow () {
-	echo -ne '\xE2\x86\x91'
+
+	if [ "UTF-8" = "$(locale charmap)" ]; then	
+		echo -ne '\xE2\x86\x91'
+	else
+		echo ">"
+	fi
 }
 
 __get_downarrow() {
-	echo -ne '\xE2\x86\x93'
+
+	if [ "UTF-8" = "$(locale charmap)" ]; then
+		echo -ne '\xE2\x86\x93'
+	else
+		echo "<"
+	fi
 }
 
 __get_updownarrow() {
-	echo -ne '\xE2\x87\x85'
+
+	if [ "UTF-8" = "$(locale charmap)" ]; then
+		echo -ne '\xE2\x87\x85'
+	else
+		echo "<>"
+	fi
 }
 
 # __gitdir accepts 0 or 1 arguments (i.e., location)
