@@ -49,6 +49,20 @@
 # GIT_PS1_SHOWUPSTREAM, you can override it on a per-repository basis by
 # setting the bash.showUpstream config variable.
 
+
+# return the uparrow character
+__get_uparrow () {
+	echo -ne '\xE2\x86\x91'
+}
+
+__get_downarrow() {
+	echo -ne '\xE2\x86\x93'
+}
+
+__get_updownarrow() {
+	echo -ne '\xE2\x87\x85'
+}
+
 # __gitdir accepts 0 or 1 arguments (i.e., location)
 # returns location of .git repo
 __gitdir ()
@@ -170,12 +184,13 @@ __git_ps1_show_upstream ()
 			p=" =" ;;
 		"0	"*) # ahead of upstream
 			#p=">" ;;
-			p=" ↑" ;;
+			p="$(__get_uparrow)" ;;
 		*"	0") # behind upstream
 			#p="<" ;;
-			p=" ↓" ;;
+			p="$(__get_downarrow)" ;;
 		*)	    # diverged from upstream
-			p=" ⇅" ;;
+			#p="<>" ;;
+			p="$(__get_updownarrow)" ;;
 		esac
 	else
 		case "$count" in
@@ -183,15 +198,16 @@ __git_ps1_show_upstream ()
 			p="" ;;
 		"0	0") # equal to upstream
 			#p=" u=" ;;
-			p=" ↕0" ;;
+			p=" $(__get_updownarrow)0" ;;
 		"0	"*) # ahead of upstream
 			#p=" u+${count#0	}" ;;
-			p=" ↑${count#0	}" ;;
+			p=" $(__get_uparrow)${count#0	}" ;;
 		*"	0") # behind upstream
 			#p=" u-${count%	0}" ;;
-			p=" ↓${count%	0}" ;;
+			p=" $(__get_downarrow)${count%	0}" ;;
 		*)	    # diverged from upstream
-			p=" ↑${count#*	}↓${count%	*}" ;;
+			#p=" u+${count#*	}-${count%	*}" ;;
+			p=" $(__get_uparrow)${count#*	}$(__get_downarrow)${count%	*}" ;;
 		esac
 	fi
 
